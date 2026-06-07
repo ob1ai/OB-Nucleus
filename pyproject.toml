@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ob-nucleus"
+version = "0.1.0"
+description = "OB.1 operations layer for Audity and Nucleus: typed client, CLI, read-only mirror, BlueprintOS sync"
+requires-python = ">=3.11"
+dependencies = ["httpx>=0.27"]
+
+[project.scripts]
+ob-nucleus = "ob_nucleus.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

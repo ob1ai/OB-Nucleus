@@ -1,0 +1,27 @@
+# Secrets: never commit tokens or env files
+.env
+.env.*
+!.env.example
+*token*.txt
+ob-nucleus-env-keys.txt
+
+# Local mirror database
+data/
+*.sqlite
+*.sqlite-journal
+*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# OS noise
+Thumbs.db
+desktop.ini
