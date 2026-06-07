@@ -1,0 +1,711 @@
+﻿{
+    "identity":  {
+                     "ok":  true,
+                     "data":  {
+                                  "success":  true,
+                                  "authMethod":  "pat",
+                                  "userId":  "user_31Z9OMS2dN1L69RyeJrhB9dsrSI",
+                                  "authData":  {
+                                                   "fromAuth":  {
+                                                                    "userId":  "user_31Z9OMS2dN1L69RyeJrhB9dsrSI"
+                                                                },
+                                                   "fromCurrentUser":  null,
+                                                   "patKeyId":  "f0598003-a72a-41bd-9040-6369759e9a97",
+                                                   "patScopes":  [
+                                                                     "read"
+                                                                 ]
+                                               }
+                              }
+                 },
+    "tier":  {
+                 "ok":  true,
+                 "data":  {
+                              "success":  true,
+                              "tier":  "agency",
+                              "userId":  "user_31Z9OMS2dN1L69RyeJrhB9dsrSI"
+                          }
+             },
+    "credits":  {
+                    "ok":  true,
+                    "data":  {
+                                 "remaining":  50000,
+                                 "allocated":  50000,
+                                 "used":  0,
+                                 "usagePercentage":  0,
+                                 "tier":  {
+                                              "id":  "agency",
+                                              "name":  "Agency",
+                                              "price":  199
+                                          },
+                                 "lastReset":  "2026-05-22T18:05:35.601Z",
+                                 "nextReset":  "2026-06-19T18:05:35.601Z",
+                                 "daysUntilReset":  13,
+                                 "canCreateProject":  true,
+                                 "projectCreationCost":  1000,
+                                 "projectsRemaining":  50,
+                                 "timestamp":  "2026-06-07T18:02:40.005Z",
+                                 "billingProvider":  "stripe"
+                             }
+                },
+    "projects":  {
+                     "ok":  true,
+                     "data":  {
+                                  "value":  [
+                                                {
+                                                    "id":  "90bcd121-4a59-4896-8fff-4f7a5be38f7e",
+                                                    "clientName":  "Fairlawn Flooring",
+                                                    "industry":  "Retail \u0026 E-commerce",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Fairlawn Flooring Co. -- Retail, Office and in-field installation/sales techs",
+                                                    "currency":  "USD",
+                                                    "status":  "interviews",
+                                                    "createdAt":  "2026-01-28T17:51:07.922337+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  11,
+                                                    "analysisProgress":  50,
+                                                    "stakeholdersCount":  3,
+                                                    "hasAnalysis":  true,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  true,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "interviews",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Ready for final audit analysis to generate deliverables",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "document_upload",
+                                                                         "date":  "2026-01-30T19:57:12.266Z",
+                                                                         "description":  "Document uploaded: Customer Relationship Management (CRM) Process.md"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "5cd7f4f5-c4b2-45e9-8152-822211b24acf",
+                                                    "clientName":  "Horizon Health Clinic",
+                                                    "industry":  "Healthcare",
+                                                    "companySize":  "11-50",
+                                                    "description":  "Health Clinic and Discovery",
+                                                    "currency":  "USD",
+                                                    "status":  "interviews",
+                                                    "createdAt":  "2026-01-28T17:47:24.062641+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  9,
+                                                    "analysisProgress":  50,
+                                                    "stakeholdersCount":  2,
+                                                    "hasAnalysis":  true,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  true,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "interviews",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Ready for final audit analysis to generate deliverables",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "document_upload",
+                                                                         "date":  "2026-01-28T19:44:39.601Z",
+                                                                         "description":  "Document uploaded: IT Infrastructure and Security Overview_ Horizon Health Clinic.md"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "7b81bf3f-8bb0-4d06-ab50-c4860394f943",
+                                                    "clientName":  "OLLY PBC",
+                                                    "industry":  "Other",
+                                                    "companySize":  "201-1000",
+                                                    "description":  null,
+                                                    "currency":  "USD",
+                                                    "status":  "interviews",
+                                                    "createdAt":  "2026-04-24T18:54:55.174135+00:00",
+                                                    "updatedAt":  "2026-05-18T19:37:10.282124+00:00",
+                                                    "documentsCount":  6,
+                                                    "analysisProgress":  50,
+                                                    "stakeholdersCount":  3,
+                                                    "hasAnalysis":  true,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  true,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "interviews",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Ready for final audit analysis to generate deliverables",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "document_upload",
+                                                                         "date":  "2026-05-18T19:25:46.897Z",
+                                                                         "description":  "Document uploaded: olly-pbc-audity-context.md"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "898afdbf-660f-4fe9-bdce-d7757394a1ea",
+                                                    "clientName":  "Berman \u0026 Killeen",
+                                                    "industry":  "Healthcare",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Berman \u0026 Killeen via Chloe \u0026 properties ",
+                                                    "currency":  "USD",
+                                                    "status":  "interviews",
+                                                    "createdAt":  "2026-04-15T17:19:10.546414+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  6,
+                                                    "analysisProgress":  100,
+                                                    "stakeholdersCount":  4,
+                                                    "hasAnalysis":  true,
+                                                    "hasInterviewAnalysis":  true,
+                                                    "hasAuditAnalysis":  true,
+                                                    "hasQuestionnaires":  true,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "interviews",
+                                                    "uiStatus":  "completed",
+                                                    "canView":  true,
+                                                    "statusLabel":  "Completed",
+                                                    "statusDescription":  "Analysis complete with deliverables ready for review",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "document_upload",
+                                                                         "date":  "2026-05-17T15:44:21.646Z",
+                                                                         "description":  "Document uploaded: berman_killeen_project_charter (1).md"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "6eda5068-20cc-435e-8948-a48e46652279",
+                                                    "clientName":  "Athens Foods",
+                                                    "industry":  "Not specified",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Audit created from lead generation survey for Ryan Clark at Athens Foods. AI Readiness Score: 53/100. Industry: Not specified. Size: Not specified.",
+                                                    "currency":  "USD",
+                                                    "status":  "interviews",
+                                                    "createdAt":  "2026-03-26T16:50:23.548966+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  5,
+                                                    "analysisProgress":  100,
+                                                    "stakeholdersCount":  4,
+                                                    "hasAnalysis":  true,
+                                                    "hasInterviewAnalysis":  true,
+                                                    "hasAuditAnalysis":  true,
+                                                    "hasQuestionnaires":  true,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "interviews",
+                                                    "uiStatus":  "completed",
+                                                    "canView":  true,
+                                                    "statusLabel":  "Completed",
+                                                    "statusDescription":  "Analysis complete with deliverables ready for review",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "analysis_generated",
+                                                                         "date":  "2026-05-08T01:03:03.548Z",
+                                                                         "description":  "Analysis generated"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "0012e5de-9e0a-4766-b786-95c3bcdb9984",
+                                                    "clientName":  "ARCly Media",
+                                                    "industry":  "Technology",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Audit created from lead generation survey for Armaan Chugh at ARCly Media. AI Readiness Score: 68/100",
+                                                    "currency":  "USD",
+                                                    "status":  "interviews",
+                                                    "createdAt":  "2025-10-09T14:46:39.942459+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  2,
+                                                    "analysisProgress":  100,
+                                                    "stakeholdersCount":  1,
+                                                    "hasAnalysis":  true,
+                                                    "hasInterviewAnalysis":  true,
+                                                    "hasAuditAnalysis":  true,
+                                                    "hasQuestionnaires":  true,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "interviews",
+                                                    "uiStatus":  "completed",
+                                                    "canView":  true,
+                                                    "statusLabel":  "Completed",
+                                                    "statusDescription":  "Analysis complete with deliverables ready for review",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "analysis_generated",
+                                                                         "date":  "2025-10-09T15:14:47.324Z",
+                                                                         "description":  "Analysis generated"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "cfb30ad8-b3d3-42c6-9ea3-3c53edbd6be3",
+                                                    "clientName":  "Mauro Insurance",
+                                                    "industry":  "Professional Services",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Evaluating Dan Mauro\u0027s document processing from email logic, to document intake, PDF extraction, navigation to mutual insurance company, credentials, data input, publication to platform, backup to novatae. We are also breaking down the process for State filings in Iowa at Quarter End.  ",
+                                                    "currency":  "USD",
+                                                    "status":  "analysis",
+                                                    "createdAt":  "2025-10-01T03:47:17.966156+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  2,
+                                                    "analysisProgress":  100,
+                                                    "stakeholdersCount":  3,
+                                                    "hasAnalysis":  true,
+                                                    "hasInterviewAnalysis":  true,
+                                                    "hasAuditAnalysis":  true,
+                                                    "hasQuestionnaires":  true,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "interviews",
+                                                    "uiStatus":  "completed",
+                                                    "canView":  true,
+                                                    "statusLabel":  "Completed",
+                                                    "statusDescription":  "Analysis complete with deliverables ready for review",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "analysis_generated",
+                                                                         "date":  "2025-10-09T21:47:05.699Z",
+                                                                         "description":  "Analysis generated"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "8f3a2bf9-94e7-4093-852b-959d756ffefd",
+                                                    "clientName":  "Droppgram",
+                                                    "industry":  "Retail  E-commerce",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Audit created from lead generation survey for Sadman Sadik at Droppgram. AI Readiness Score: 89/100. Industry: Retail  E-commerce. Size: Solo/1 person.",
+                                                    "currency":  "USD",
+                                                    "status":  "setup",
+                                                    "createdAt":  "2025-11-09T19:26:42.961358+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  1,
+                                                    "analysisProgress":  25,
+                                                    "stakeholdersCount":  0,
+                                                    "hasAnalysis":  false,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  false,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "analysis",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Documents uploaded, ready for analysis",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "document_upload",
+                                                                         "date":  "2025-11-09T19:27:11.341Z",
+                                                                         "description":  "Document uploaded: AI_Readiness_Survey_Droppgram_1762716430533.pdf"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "38b9574a-098d-4e04-b104-e21eebb3952f",
+                                                    "clientName":  "Sunshine Inc.",
+                                                    "industry":  "Professional Services (Legal, Consulting, Accounting)",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Audit created from lead generation survey for Sunny Day at Sunshine Inc.. AI Readiness Score: 88/100. Industry: Professional Services (Legal, Consulting, Accounting). Size: 11-50 employees.",
+                                                    "currency":  "USD",
+                                                    "status":  "setup",
+                                                    "createdAt":  "2026-01-11T20:49:42.431164+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  1,
+                                                    "analysisProgress":  25,
+                                                    "stakeholdersCount":  0,
+                                                    "hasAnalysis":  false,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  false,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "analysis",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Documents uploaded, ready for analysis",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "document_upload",
+                                                                         "date":  "2026-01-11T20:50:09.664Z",
+                                                                         "description":  "Document uploaded: AI_Readiness_Survey_Sunshine_Inc__1768164609180.pdf"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "825b86ea-fc18-42cb-bb00-292e6c211279",
+                                                    "clientName":  "ob1",
+                                                    "industry":  "Manufacturing  Industrial",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Audit created from lead generation survey for Chris at ob1. AI Readiness Score: 89/100. Industry: Manufacturing  Industrial. Size: 11-50 employees.",
+                                                    "currency":  "USD",
+                                                    "status":  "setup",
+                                                    "createdAt":  "2026-01-25T14:59:00.391717+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  1,
+                                                    "analysisProgress":  25,
+                                                    "stakeholdersCount":  1,
+                                                    "hasAnalysis":  false,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  true,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "interviews",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Documents uploaded, ready for analysis",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "document_upload",
+                                                                         "date":  "2026-01-25T14:59:02.105Z",
+                                                                         "description":  "Document uploaded: AI_Readiness_Survey_ob1_1769353141332.pdf"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "8022bfe9-eb8b-4453-af8a-dc0e48c3830f",
+                                                    "clientName":  "Viable Synergy LLC",
+                                                    "industry":  "Technology  Software",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Audit created from lead generation survey for Jane Doe at Viable Synergy LLC. AI Readiness Score: 80/100. Industry: Technology  Software. Size: Solo/1 person.",
+                                                    "currency":  "USD",
+                                                    "status":  "setup",
+                                                    "createdAt":  "2026-01-28T19:40:13.671417+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  1,
+                                                    "analysisProgress":  25,
+                                                    "stakeholdersCount":  0,
+                                                    "hasAnalysis":  false,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  false,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "analysis",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Documents uploaded, ready for analysis",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "document_upload",
+                                                                         "date":  "2026-01-28T19:40:15.029Z",
+                                                                         "description":  "Document uploaded: AI_Readiness_Survey_Viable_Synergy_LLC_1769629214628.pdf"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "cb963ea3-cc09-4fc5-ab3d-4b0727fdfb7c",
+                                                    "clientName":  "Cleveland Candy Co.",
+                                                    "industry":  "Manufacturing  Industrial",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Audit created from lead generation survey for Mark Richardson at Cleveland Candy Co.. AI Readiness Score: 82/100. Industry: Manufacturing  Industrial. Size: 11-50 employees.",
+                                                    "currency":  "USD",
+                                                    "status":  "interviews",
+                                                    "createdAt":  "2026-02-05T21:00:01.163135+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  1,
+                                                    "analysisProgress":  100,
+                                                    "stakeholdersCount":  3,
+                                                    "hasAnalysis":  true,
+                                                    "hasInterviewAnalysis":  true,
+                                                    "hasAuditAnalysis":  true,
+                                                    "hasQuestionnaires":  true,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "interviews",
+                                                    "uiStatus":  "completed",
+                                                    "canView":  true,
+                                                    "statusLabel":  "Completed",
+                                                    "statusDescription":  "Analysis complete with deliverables ready for review",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "analysis_generated",
+                                                                         "date":  "2026-02-05T22:19:42.574Z",
+                                                                         "description":  "Analysis generated"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "76d12c45-d15a-480c-bffb-cd82a8823763",
+                                                    "clientName":  "Site Technology, Inc.",
+                                                    "industry":  "Construction  Trades",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Audit created from lead generation survey for Chloe Shepherd at Site Technology, Inc.. AI Readiness Score: 87/100. Industry: Construction  Trades. Size: 11-50 employees.",
+                                                    "currency":  "USD",
+                                                    "status":  "interviews",
+                                                    "createdAt":  "2026-01-30T19:53:46.855459+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  1,
+                                                    "analysisProgress":  50,
+                                                    "stakeholdersCount":  5,
+                                                    "hasAnalysis":  true,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  true,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "interviews",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Ready for final audit analysis to generate deliverables",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  {
+                                                                         "type":  "document_upload",
+                                                                         "date":  "2026-01-30T19:53:48.487Z",
+                                                                         "description":  "Document uploaded: AI_Readiness_Survey_Site_Technology__Inc__1769802827755.pdf"
+                                                                     }
+                                                },
+                                                {
+                                                    "id":  "633a67f6-39ee-4b13-88a4-ff0d8e67d561",
+                                                    "clientName":  "Sandbox Client 001",
+                                                    "industry":  "Technology",
+                                                    "companySize":  "51-200",
+                                                    "description":  null,
+                                                    "currency":  "USD",
+                                                    "status":  "setup",
+                                                    "createdAt":  "2026-05-17T22:15:35.52841+00:00",
+                                                    "updatedAt":  "2026-05-17T22:15:35.52841+00:00",
+                                                    "documentsCount":  0,
+                                                    "analysisProgress":  0,
+                                                    "stakeholdersCount":  0,
+                                                    "hasAnalysis":  false,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  false,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "setup",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Upload documents to begin analysis",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  null
+                                                },
+                                                {
+                                                    "id":  "38f7335d-fb00-474d-b679-2e1136aac7a5",
+                                                    "clientName":  "Total Health Management",
+                                                    "industry":  "Healthcare  Medical",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Audit created from lead generation survey for Bill McCarthy at Total Health Management. AI Readiness Score: 91/100. Industry: Healthcare  Medical. Size: 51-200 employees.",
+                                                    "currency":  "USD",
+                                                    "status":  "setup",
+                                                    "createdAt":  "2025-10-23T21:16:01.054639+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  0,
+                                                    "analysisProgress":  25,
+                                                    "stakeholdersCount":  1,
+                                                    "hasAnalysis":  true,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  false,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "analysis",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Upload documents to begin analysis",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  null
+                                                },
+                                                {
+                                                    "id":  "c3302407-3d60-4085-b1a7-4282f0255b02",
+                                                    "clientName":  "Bacon",
+                                                    "industry":  "Manufacturing  Industrial",
+                                                    "companySize":  "1-10",
+                                                    "description":  "Audit created from lead generation survey for Kevin at Bacon. AI Readiness Score: 85/100. Industry: Manufacturing  Industrial. Size: 51-200 employees.",
+                                                    "currency":  "USD",
+                                                    "status":  "setup",
+                                                    "createdAt":  "2026-01-18T18:50:07.363405+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  0,
+                                                    "analysisProgress":  0,
+                                                    "stakeholdersCount":  0,
+                                                    "hasAnalysis":  false,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  false,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "setup",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Upload documents to begin analysis",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  null
+                                                },
+                                                {
+                                                    "id":  "de1b3d11-48e2-49b7-a23a-0cb7a72b9f58",
+                                                    "clientName":  "Cleveland Candy Company",
+                                                    "industry":  "Manufacturing",
+                                                    "companySize":  "11-50",
+                                                    "description":  "clAudit",
+                                                    "currency":  "USD",
+                                                    "status":  "setup",
+                                                    "createdAt":  "2026-02-05T20:13:40.146894+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  0,
+                                                    "analysisProgress":  0,
+                                                    "stakeholdersCount":  0,
+                                                    "hasAnalysis":  false,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  false,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "setup",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Upload documents to begin analysis",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  null
+                                                },
+                                                {
+                                                    "id":  "2f6e2c0a-a64e-478c-b156-3589be710f60",
+                                                    "clientName":  "Hello Baru",
+                                                    "industry":  "Manufacturing",
+                                                    "companySize":  "11-50",
+                                                    "description":  "Demo",
+                                                    "currency":  "USD",
+                                                    "status":  "setup",
+                                                    "createdAt":  "2026-03-25T20:18:26.564596+00:00",
+                                                    "updatedAt":  "2026-05-09T15:11:32.25629+00:00",
+                                                    "documentsCount":  0,
+                                                    "analysisProgress":  0,
+                                                    "stakeholdersCount":  0,
+                                                    "hasAnalysis":  false,
+                                                    "hasInterviewAnalysis":  false,
+                                                    "hasAuditAnalysis":  false,
+                                                    "hasQuestionnaires":  false,
+                                                    "hasDeliverables":  false,
+                                                    "databaseStatus":  "setup",
+                                                    "uiStatus":  "in-progress",
+                                                    "canView":  false,
+                                                    "statusLabel":  "In Progress",
+                                                    "statusDescription":  "Upload documents to begin analysis",
+                                                    "deliverablesStatus":  {
+                                                                               "presentations":  false,
+                                                                               "reports":  false,
+                                                                               "roadmaps":  false,
+                                                                               "opportunities":  false
+                                                                           },
+                                                    "lastActivity":  null
+                                                }
+                                            ],
+                                  "Count":  18
+                              }
+                 },
+    "insights_unread":  {
+                            "ok":  true,
+                            "data":  {
+                                         "insights":  [
+                                                          {
+                                                              "id":  "a489173e-1adc-48d0-97d7-d75d4aeb4497",
+                                                              "userId":  "user_31Z9OMS2dN1L69RyeJrhB9dsrSI",
+                                                              "insightType":  "stale_client",
+                                                              "title":  "No activity on OLLY PBC in 14+ days",
+                                                              "content":  "The project \"OLLY PBC\" has had no recorded activity (captures, messages, or session notes) in over 14 days. It may be worth checking in.",
+                                                              "context":  {
+                                                                              "projectId":  "7b81bf3f-8bb0-4d06-ab50-c4860394f943",
+                                                                              "clientName":  "OLLY PBC",
+                                                                              "projectName":  "OLLY PBC",
+                                                                              "daysSinceActivity":  14
+                                                                          },
+                                                              "priority":  "high",
+                                                              "isRead":  false,
+                                                              "isDismissed":  false,
+                                                              "expiresAt":  "2026-06-08T10:00:59.991+00:00",
+                                                              "createdAt":  "2026-06-01T10:01:00.025265+00:00"
+                                                          },
+                                                          {
+                                                              "id":  "b67df748-1e8e-4181-8d2e-057f9da714b5",
+                                                              "userId":  "user_31Z9OMS2dN1L69RyeJrhB9dsrSI",
+                                                              "insightType":  "stale_client",
+                                                              "title":  "No activity on Sandbox Client 001 in 14+ days",
+                                                              "content":  "The project \"Sandbox Client 001\" has had no recorded activity (captures, messages, or session notes) in over 14 days. It may be worth checking in.",
+                                                              "context":  {
+                                                                              "projectId":  "633a67f6-39ee-4b13-88a4-ff0d8e67d561",
+                                                                              "clientName":  "Sandbox Client 001",
+                                                                              "projectName":  "Sandbox Client 001",
+                                                                              "daysSinceActivity":  14
+                                                                          },
+                                                              "priority":  "normal",
+                                                              "isRead":  false,
+                                                              "isDismissed":  false,
+                                                              "expiresAt":  "2026-06-08T10:00:59.375+00:00",
+                                                              "createdAt":  "2026-06-01T10:00:59.404108+00:00"
+                                                          }
+                                                      ]
+                                     }
+                        }
+}
