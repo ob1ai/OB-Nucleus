@@ -49,3 +49,9 @@ Code maps live shapes with brief-shape fallbacks; raw JSON is preserved in the m
 6. Merge chief/initial-build to main after review. NO CREDITS.
 
 Rules before tools.
+
+## Update 2026-06-07, evening
+
+- Chris applied supabase/schema.sql via the SQL editor (success, no rows returned). Blocker 1 RESOLVED.
+- ob-nucleus mirror sync pushed 4 rows to BlueprintOS. Verified in Postgres: nucleus_memories 1 (Athens Foods lead stage), nucleus_contacts 1, nucleus_insights 2 (both stale_client). Pipeline is now live end to end: Audity reads to SQLite to Supabase.
+- Known gap: sync_runs audit rows are written to SQLite only; remote run logging to the Supabase sync_runs table is a small future enhancement.
