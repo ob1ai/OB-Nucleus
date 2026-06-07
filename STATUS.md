@@ -55,3 +55,13 @@ Rules before tools.
 - Chris applied supabase/schema.sql via the SQL editor (success, no rows returned). Blocker 1 RESOLVED.
 - ob-nucleus mirror sync pushed 4 rows to BlueprintOS. Verified in Postgres: nucleus_memories 1 (Athens Foods lead stage), nucleus_contacts 1, nucleus_insights 2 (both stale_client). Pipeline is now live end to end: Audity reads to SQLite to Supabase.
 - Known gap: sync_runs audit rows are written to SQLite only; remote run logging to the Supabase sync_runs table is a small future enhancement.
+
+## Update 2026-06-07, directives executed
+
+- Seat decision (brief 4.3) CLOSED by Chris: OB.1 operates Audity on Chris's agency-level seat with per-agent tokens, Chief token active. No org account. Recorded in TOKEN_REGISTRY.md.
+- Merged chief/initial-build to main (fast forward) and pushed.
+- First gated write EXECUTED with approval: capture-note 422b17b4-6ca9-4ea8-91e7-b7139a4bf593 on the write token, extraction processed 5 items, promote dry run drafted 4 memories and wrote none. Write path verified end to end. Zero credits.
+- GlobalTech conversion HELD by Chris after flags: contact email is test.analysis@example.com (seeded test lead pattern) and conversionTimestamp is populated with no audit ID. Conversion queue: GlobalTech (94, flagged), USI Insurance (92).
+- Daily sweep SCHEDULED: Windows Task Scheduler task "OB1 Audity Daily Sweep", daily 07:00, runs scripts/daily_sweep.ps1 (read sweep + mirror sync + Drive copy). Next run 2026-06-08 07:00.
+- Token hygiene DONE: plaintext key file retired from the Drive folder, all ten credentials preserved as OB1AIRIG user environment variables, redacted TOKEN_REGISTRY.md created per brief 4.3.4. Caveat: the retired file lived on a shared drive; revoke and reissue any token on suspicion of exposure.
+- Credits at session end: 50000 of 50000. Zero spent across the entire build.
