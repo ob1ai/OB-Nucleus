@@ -1,14 +1,19 @@
-"""Read-only local mirror of the Nucleus models (brief Section 5).
+"""Read-only local mirror of Audity client work and Nucleus models.
 
 Targets:
 1. SQLite at data/nucleus_mirror.sqlite (always; gitignored). Offline dev,
    local knowledge base, read cache.
 2. Supabase BlueprintOS (project mjbbpzwyamymboazabmx) via PostgREST upsert,
    when OBN_SUPABASE_URL and OBN_SUPABASE_SERVICE_KEY are set and the
-   schema in supabase/schema.sql has been applied.
+   schemas in supabase/ have been applied.
 
-Populated exclusively from listMemories, listCaptures, listContacts,
-listInsights. Nothing here ever writes back to Audity or Nucleus.
+Populated exclusively from listProjects, listLeads, listMemories,
+listCaptures, listContacts, listInsights. Nothing here ever writes back
+to Audity or Nucleus. Mirror, do not fork: Audity is the source of truth.
+
+Live API note (2026-06-07): conversionTimestamp on leads is NOT a
+conversion marker (44 of 53 leads carry it unconverted). The only
+reliable conversion flag is convertedToAuditId.
 """
 
 from __future__ import annotations
@@ -28,6 +33,35 @@ from .api import Audity
 DB_PATH = Path("data") / "nucleus_mirror.sqlite"
 
 SCHEMA = """
+CREATE TABLE IF NOT EXISTS projects (
+  id TEXT PRIMARY KEY,
+  client_name TEXT,
+  status TEXT,
+  industry TEXT,
+  company_size TEXT,
+  description TEXT,
+  currency TEXT,
+  created_at TEXT,
+  updated_at TEXT,
+  raw TEXT,
+  synced_at TEXT
+);
+CREATE TABLE IF NOT EXISTS leads (
+  id TEXT PRIMARY KEY,
+  business_name TEXT,
+  client_name TEXT,
+  client_email TEXT,
+  ai_readiness_score REAL,
+  composite_score REAL,
+  status TEXT,
+  converted_to_audit_id TEXT,
+  conversion_timestamp TEXT,
+  source TEXT,
+  created_at TEXT,
+  updated_at TEXT,
+  raw TEXT,
+  synced_at TEXT
+);
 CREATE TABLE IF NOT EXISTS memories (
   id TEXT PRIMARY KEY,
   memory_type TEXT,
@@ -125,9 +159,11 @@ def open_db(db_path: Path = DB_PATH) -> sqlite3.Connection:
 
 
 def sync(db_path: Path = DB_PATH, verbose: bool = True) -> dict:
-    """Pull the four Nucleus reads and upsert into SQLite, then Supabase."""
+    """Pull the six Audity reads and upsert into SQLite, then Supabase."""
     started = _now()
     with Audity() as a:
+        projects = _items(a.projects.list(), "projects")
+        leads = _items(a.leads.list(limit=100), "data")
         memories = _items(a.nucleus.memories(), "memories")
         captures = _items(a.nucleus.captures(), "captures")
         contacts = _items(a.nucleus.contacts(), "contacts")
@@ -136,6 +172,22 @@ def sync(db_path: Path = DB_PATH, verbose: bool = True) -> dict:
     conn = open_db(db_path)
     synced = _now()
     with conn:
+        for p in projects:
+            conn.execute(
+                "INSERT OR REPLACE INTO projects VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                _row(p, "id", "clientName", "status", "industry", "companySize",
+                     "description", "currency", "createdAt", "updatedAt")
+                + [json.dumps(p), synced],
+            )
+        for l in leads:
+            conn.execute(
+                "INSERT OR REPLACE INTO leads VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                _row(l, "id", "businessName", "clientName", "clientEmail",
+                     "aiReadinessScore", "compositeScore", "status",
+                     "convertedToAuditId", "conversionTimestamp", "source",
+                     "createdAt", "updatedAt")
+                + [json.dumps(l), synced],
+            )
         for m in memories:
             conn.execute(
                 "INSERT OR REPLACE INTO memories VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -163,20 +215,23 @@ def sync(db_path: Path = DB_PATH, verbose: bool = True) -> dict:
         for i in insights:
             conn.execute(
                 "INSERT OR REPLACE INTO insights VALUES (?,?,?,?,?,?,?,?,?,?)",
-                [i.get("id"), i.get("insightType") or i.get("type"), i.get("title"), i.get("content") or i.get("body")]
+                [i.get("id"), i.get("insightType") or i.get("type"), i.get("title"),
+                 i.get("content") or i.get("body")]
                 + [1 if i.get("isRead") else 0, 1 if i.get("isDismissed") else 0]
                 + _row(i, "projectId", "createdAt")
                 + [json.dumps(i), synced],
             )
 
-    counts = {"memories": len(memories), "captures": len(captures),
+    counts = {"projects": len(projects), "leads": len(leads),
+              "memories": len(memories), "captures": len(captures),
               "contacts": len(contacts), "insights": len(insights)}
 
     supabase_pushed = 0
     supabase_note = "skipped (OBN_SUPABASE_URL / OBN_SUPABASE_SERVICE_KEY not set)"
     if os.environ.get("OBN_SUPABASE_URL") and os.environ.get("OBN_SUPABASE_SERVICE_KEY"):
         try:
-            supabase_pushed = _push_supabase(memories, captures, contacts, insights, synced)
+            supabase_pushed = _push_supabase(projects, leads, memories, captures,
+                                             contacts, insights, synced)
             supabase_note = f"upserted {supabase_pushed} rows"
         except Exception as exc:
             supabase_note = f"failed: {exc}"
@@ -193,6 +248,29 @@ def sync(db_path: Path = DB_PATH, verbose: bool = True) -> dict:
     if verbose:
         print(json.dumps(result, indent=2))
     return result
+
+
+def _sb_rows_projects(items: list[dict], synced: str) -> list[dict]:
+    return [{
+        "id": p.get("id"), "client_name": p.get("clientName"),
+        "status": p.get("status"), "industry": p.get("industry"),
+        "company_size": p.get("companySize"), "description": p.get("description"),
+        "currency": p.get("currency"), "created_at": p.get("createdAt"),
+        "updated_at": p.get("updatedAt"), "raw": p, "synced_at": synced,
+    } for p in items]
+
+
+def _sb_rows_leads(items: list[dict], synced: str) -> list[dict]:
+    return [{
+        "id": l.get("id"), "business_name": l.get("businessName"),
+        "client_name": l.get("clientName"), "client_email": l.get("clientEmail"),
+        "ai_readiness_score": l.get("aiReadinessScore"),
+        "composite_score": l.get("compositeScore"), "status": l.get("status"),
+        "converted_to_audit_id": l.get("convertedToAuditId"),
+        "conversion_timestamp": l.get("conversionTimestamp"),
+        "source": l.get("source"), "created_at": l.get("createdAt"),
+        "updated_at": l.get("updatedAt"), "raw": l, "synced_at": synced,
+    } for l in items]
 
 
 def _sb_rows_memories(items: list[dict], synced: str) -> list[dict]:
@@ -232,15 +310,17 @@ def _sb_rows_contacts(items: list[dict], synced: str) -> list[dict]:
 
 def _sb_rows_insights(items: list[dict], synced: str) -> list[dict]:
     return [{
-        "id": i.get("id"), "type": i.get("insightType") or i.get("type"), "title": i.get("title"),
+        "id": i.get("id"), "type": i.get("insightType") or i.get("type"),
+        "title": i.get("title"),
         "body": i.get("content") or i.get("body"), "is_read": bool(i.get("isRead")),
         "is_dismissed": bool(i.get("isDismissed")), "project_id": i.get("projectId"),
         "created_at": i.get("createdAt"), "raw": i, "synced_at": synced,
     } for i in items]
 
 
-def _push_supabase(memories, captures, contacts, insights, synced: str) -> int:
-    """Upsert mirror rows into BlueprintOS via PostgREST. Our database; not a Nucleus write."""
+def _push_supabase(projects, leads, memories, captures, contacts, insights,
+                   synced: str) -> int:
+    """Upsert mirror rows into BlueprintOS via PostgREST. Our database; not an Audity write."""
     url = os.environ["OBN_SUPABASE_URL"].rstrip("/")
     key = os.environ["OBN_SUPABASE_SERVICE_KEY"]
     headers = {
@@ -250,6 +330,8 @@ def _push_supabase(memories, captures, contacts, insights, synced: str) -> int:
         "Prefer": "resolution=merge-duplicates,return=minimal",
     }
     tables = {
+        "audity_projects": _sb_rows_projects(projects, synced),
+        "audity_leads": _sb_rows_leads(leads, synced),
         "nucleus_memories": _sb_rows_memories(memories, synced),
         "nucleus_captures": _sb_rows_captures(captures, synced),
         "nucleus_contacts": _sb_rows_contacts(contacts, synced),
@@ -267,7 +349,7 @@ def _push_supabase(memories, captures, contacts, insights, synced: str) -> int:
                 if resp.status_code >= 400:
                     raise RuntimeError(
                         f"Supabase upsert to {table} failed: HTTP {resp.status_code} "
-                        f"{resp.text[:200]}. Has supabase/schema.sql been applied?")
+                        f"{resp.text[:200]}. Have the supabase/ schemas been applied?")
                 pushed += len(chunk)
                 time.sleep(0.2)
     return pushed
@@ -278,7 +360,7 @@ def status(db_path: Path = DB_PATH) -> dict:
         return {"mirror": "not built yet; run: ob-nucleus mirror sync"}
     conn = open_db(db_path)
     out: dict[str, Any] = {}
-    for table in ("memories", "captures", "contacts", "insights"):
+    for table in ("projects", "leads", "memories", "captures", "contacts", "insights"):
         out[table] = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
     last = conn.execute(
         "SELECT finished_at, counts, supabase_pushed, status FROM sync_runs "

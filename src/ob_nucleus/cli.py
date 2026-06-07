@@ -47,6 +47,11 @@ def build_parser() -> argparse.ArgumentParser:
         sp.add_argument("project_id")
     sp = proj.add_parser("job")
     sp.add_argument("job_id")
+    sp = proj.add_parser("patch", help="update project fields; 0 credits; requires --confirm")
+    sp.add_argument("project_id")
+    sp.add_argument("--name")
+    sp.add_argument("--description")
+    sp.add_argument("--confirm", action="store_true")
     sp = proj.add_parser("create", help="COSTS 1000 CREDITS; requires --confirm")
     sp.add_argument("--name", required=True)
     sp.add_argument("--description")
@@ -154,6 +159,10 @@ def _dispatch(args: argparse.Namespace) -> int:
                 _emit(a.projects.analysis(args.project_id))
             elif cmd == "job":
                 _emit(a.projects.job_status(args.job_id))
+            elif cmd == "patch":
+                fields = {k: v for k, v in
+                          (("name", args.name), ("description", args.description)) if v}
+                _emit(a.projects.patch(args.project_id, fields, confirm=args.confirm))
             elif cmd == "create":
                 _emit(a.projects.create(args.name, args.description, confirm=args.confirm))
             elif cmd == "trigger-analysis":
