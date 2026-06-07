@@ -65,3 +65,13 @@ Rules before tools.
 - Daily sweep SCHEDULED: Windows Task Scheduler task "OB1 Audity Daily Sweep", daily 07:00, runs scripts/daily_sweep.ps1 (read sweep + mirror sync + Drive copy). Next run 2026-06-08 07:00.
 - Token hygiene DONE: plaintext key file retired from the Drive folder, all ten credentials preserved as OB1AIRIG user environment variables, redacted TOKEN_REGISTRY.md created per brief 4.3.4. Caveat: the retired file lived on a shared drive; revoke and reissue any token on suspicion of exposure.
 - Credits at session end: 50000 of 50000. Zero spent across the entire build.
+
+## Update 2026-06-07, night: org rollout package
+
+- Active-clients scope: BlueprintOS push filtered to in-flight, real engagements (OBN_SYNC_SCOPE, default active). Verified: 7 of 18 projects in Supabase; archived/setup/sandbox excluded. SQLite keeps the full universe.
+- Connector qualification (docs/AUDITY_CONNECTOR_QUALIFICATION.md): Audity hosted MCP is documentation search only (2 tools, unauthenticated); no PAT full-surface MCP exists in v1. Discrepancy logged. Remediation shipped: OB-Nucleus MCP server (13 guarded tools), registered user-scope on OB1AIRIG, rollout commands documented for every org user.
+- PRD OB1-INT-2606-001 (docs/PRD_OB1_REVENUE_LOOP.md): three-agent revenue loop over BlueprintOS tying Audity to Attio (greenfield, schema specced) and pipeline.help. Four blocking questions await Chris/Matt/Chloe.
+- SOP (docs/ob-nucleus-operations.sop.md): team-facing operating procedure, plain-language paths for non-technical users.
+- Internal 3-slide brief: OB1_Systems_Brief_OB-Nucleus.pptx in the Drive folder (Architectural Blueprint theme, IR voice).
+- Automation roadmap (docs/AUTOMATION_ROADMAP.md): Granola transcription pipeline, ReadyLink distribution, bilateral readiness tracking, Meet scheduling, plus the maturity-ladder iteration process.
+- Lead model correction: conversionTimestamp is not a conversion marker (44 of 53 leads carry it unconverted); convertedToAuditId is the only reliable flag. Encoded in schema comments and the MCP tool descriptions.
