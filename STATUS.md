@@ -75,3 +75,11 @@ Rules before tools.
 - Internal 3-slide brief: OB1_Systems_Brief_OB-Nucleus.pptx in the Drive folder (Architectural Blueprint theme, IR voice).
 - Automation roadmap (docs/AUTOMATION_ROADMAP.md): Granola transcription pipeline, ReadyLink distribution, bilateral readiness tracking, Meet scheduling, plus the maturity-ladder iteration process.
 - Lead model correction: conversionTimestamp is not a conversion marker (44 of 53 leads carry it unconverted); convertedToAuditId is the only reliable flag. Encoded in schema comments and the MCP tool descriptions.
+
+## Update 2026-06-07, late: lane split
+
+- Founding session closed. Work split into six lanes, each with a self-contained kickoff in docs/handoffs/ (00 index plus lanes 01-06: data layer, connector rollout, revenue loop, enablement, comms, automation W1). Coordination ledger: this STATUS.md, section Lane updates below. Branch convention: chief/lane-NN-topic. Chris merges.
+
+## Lane updates
+
+- (none yet)
