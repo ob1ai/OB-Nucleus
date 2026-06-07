@@ -1,4 +1,4 @@
-"""Read-only local mirror of Audity client work and Nucleus models.
+﻿"""Read-only local mirror of Audity client work and Nucleus models.
 
 Targets:
 1. SQLite at data/nucleus_mirror.sqlite (always; gitignored). Offline dev,
@@ -151,6 +151,29 @@ def _row(d: dict, *keys: str) -> list:
     return [d.get(k) for k in keys]
 
 
+EXCLUDED_PROJECT_STATUSES = {"setup", "archived"}
+TEST_CLIENT_PREFIXES = ("sandbox",)
+
+
+def active_clients(projects: list[dict]) -> list[dict]:
+    """OB.1 scope rule (Chris, 2026-06-07): BlueprintOS carries active client
+    work only. Active means the engagement is in flight (status past setup)
+    and the client is real (no sandbox or test rigs). The local SQLite mirror
+    always keeps everything; this filter governs the Supabase push only.
+    Override with OBN_SYNC_SCOPE=all for a full push.
+    """
+    out = []
+    for p in projects:
+        status = (p.get("status") or "").lower()
+        name = (p.get("clientName") or "").lower()
+        if status in EXCLUDED_PROJECT_STATUSES:
+            continue
+        if name.startswith(TEST_CLIENT_PREFIXES):
+            continue
+        out.append(p)
+    return out
+
+
 def open_db(db_path: Path = DB_PATH) -> sqlite3.Connection:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(db_path)
@@ -230,9 +253,12 @@ def sync(db_path: Path = DB_PATH, verbose: bool = True) -> dict:
     supabase_note = "skipped (OBN_SUPABASE_URL / OBN_SUPABASE_SERVICE_KEY not set)"
     if os.environ.get("OBN_SUPABASE_URL") and os.environ.get("OBN_SUPABASE_SERVICE_KEY"):
         try:
-            supabase_pushed = _push_supabase(projects, leads, memories, captures,
+            scope = os.environ.get("OBN_SYNC_SCOPE", "active").lower()
+            sb_projects = projects if scope == "all" else active_clients(projects)
+            supabase_pushed = _push_supabase(sb_projects, leads, memories, captures,
                                              contacts, insights, synced)
-            supabase_note = f"upserted {supabase_pushed} rows"
+            supabase_note = (f"upserted {supabase_pushed} rows (scope={scope}, "
+                             f"projects pushed {len(sb_projects)} of {len(projects)})")
         except Exception as exc:
             supabase_note = f"failed: {exc}"
 
