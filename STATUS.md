@@ -82,4 +82,14 @@ Rules before tools.
 
 ## Lane updates
 
-- (none yet)
+### 2026-06-08, lane 01 (data layer), branch chief/lane-01-data-layer
+
+- Ground truth re-verified before any change: SQLite 18/53/4/1/1/2, Supabase 7/53/4/1/1/2, sync_runs remote 0 (the known gap).
+- schema_v3.sql authored (revenue_xref, loop_events, conversion_queue per PRD OB1-INT-2606-001 Section 6) and handed to Chris inline for the SQL editor paste. House style: defaults, agent-path indexes, RLS service-role lockdown.
+- sync_runs remote logging LIVE: every mirror sync now appends its audit row to the Supabase sync_runs table, best effort so a logging failure can never fail the sync. Verified: remote row id 1, status ok, 68 pushed. Bonus fix: the sync status label now records supabase_failed on push errors instead of an unconditional ok.
+- Stale-project purge automated: projects Audity archives mid-cycle (observed live 6/7) are deleted from Supabase on the next sync. Empty-set guard prevents a transient empty API read from wiping the table. SQLite keeps the full universe, so the purge is descoping, not data loss.
+- Drift check shipped: ob-nucleus mirror drift compares live API vs SQLite vs Supabase per table with counts, scope-adjusted expectations, freshness (26h threshold), remote sync_runs recency, and duplicate-name detection. Wired into the daily sweep digest under "BlueprintOS drift check"; daily_sweep.ps1 reordered (sync before sweep) and now hydrates OBN_SYNC_SCOPE and OBN_TEST_CLIENT_PREFIXES. First live run: zero flags, all three layers agree.
+- Data quality: test-rig exclusion list extendable without code via OBN_TEST_CLIENT_PREFIXES (default sandbox). Duplicate detection normalizes legal suffixes and catches the live Cleveland Candy pair (Cleveland Candy Co. in interviews vs Cleveland Candy Company in setup); it will flag if both ever enter active scope. Merge stays a human decision.
+- Observation for lane 3 (logged, not actioned, per lane discipline): duplicate lead business names in the mirror: Innovatio AI Solutions GmbH x3, Inside Small Business x2, kelly-jones.org x2. revenue_xref dedupe should expect these.
+- Tests: 18 of 18 green (8 new mirror unit tests added, stdlib unittest).
+- Awaiting Chris: schema_v3 paste (then lane 3 can populate); optional decision on storing a Supabase management token (sbp_) or DB password in user env to remove the DDL paste roundtrip.

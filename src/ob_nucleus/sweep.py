@@ -1,7 +1,11 @@
 """Daily read-only digest (brief Section 10 step 4).
 
-Credits, lead triage, unread insights. Reads only; zero credit risk.
-Writes a dated markdown digest to verification/ and returns it.
+Credits, lead triage, unread insights, BlueprintOS drift check.
+Reads only; zero credit risk. Writes a dated markdown digest to
+verification/ and returns it.
+
+Note: scripts/daily_sweep.ps1 runs mirror sync before this sweep so the
+drift section reflects the post-sync state.
 """
 
 from __future__ import annotations
@@ -24,6 +28,35 @@ def _insights_list(payload) -> list[dict]:
     if isinstance(payload, dict):
         return payload.get("insights") or payload.get("data") or []
     return payload or []
+
+
+def _short_ts(value) -> str:
+    return str(value)[:19] if value else "n/a"
+
+
+def _drift_lines() -> list[str]:
+    """BlueprintOS drift section: live API vs SQLite vs Supabase.
+
+    Never breaks the sweep; failure renders as a single explanatory line.
+    """
+    lines = ["## BlueprintOS drift check"]
+    try:
+        from .mirror import drift_check
+        drift = drift_check()
+        for table, row in drift["tables"].items():
+            lines.append(
+                f"- {table}: live {row['live']}, sqlite {row['sqlite']}, "
+                f"supabase {row['supabase']} (expected {row['supabase_expected']}), "
+                f"freshest {_short_ts(row['supabase_max_synced_at'])}")
+        remote = drift.get("sync_runs_remote") or {}
+        lines.append(f"- sync_runs (remote): {remote.get('count', 'n/a')} rows, "
+                     f"latest {_short_ts(remote.get('latest_finished_at'))}")
+        lines += ["", "### Drift flags"]
+        for flag in drift["flags"]:
+            lines.append(f"- {flag}")
+    except Exception as exc:
+        lines.append(f"- drift check unavailable: {exc}")
+    return lines
 
 
 def run_sweep(out_dir: Path = OUT_DIR) -> str:
@@ -70,6 +103,8 @@ def run_sweep(out_dir: Path = OUT_DIR) -> str:
                          f"{(i.get('content') or i.get('body') or '')[:140]}")
     else:
         lines.append("- Inbox zero. No unread insights.")
+
+    lines += [""] + _drift_lines()
 
     lines += ["", "Reads only. No credits were spent generating this digest.", ""]
     digest = "\n".join(lines)

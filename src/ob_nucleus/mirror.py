@@ -1,4 +1,4 @@
-﻿"""Read-only local mirror of Audity client work and Nucleus models.
+"""Read-only local mirror of Audity client work and Nucleus models.
 
 Targets:
 1. SQLite at data/nucleus_mirror.sqlite (always; gitignored). Offline dev,
@@ -14,6 +14,15 @@ to Audity or Nucleus. Mirror, do not fork: Audity is the source of truth.
 Live API note (2026-06-07): conversionTimestamp on leads is NOT a
 conversion marker (44 of 53 leads carry it unconverted). The only
 reliable conversion flag is convertedToAuditId.
+
+Integrity machinery (lane 1, 2026-06-07):
+- sync_runs audit rows land in SQLite and in the Supabase sync_runs table.
+- Stale Supabase project rows are purged when Audity archives a project
+  mid-cycle (statuses flip to archived between reads; observed live 6/7).
+  Hard delete in Supabase is safe descoping, not data loss: SQLite keeps
+  the full universe and the raw JSON history.
+- drift_check() compares live API vs SQLite vs Supabase per table, with
+  freshness and duplicate-name anomaly flags, for the daily digest.
 """
 
 from __future__ import annotations
@@ -130,6 +139,20 @@ CREATE TABLE IF NOT EXISTS sync_runs (
 );
 """
 
+# Supabase freshness threshold for drift flags. The sweep runs daily at
+# 07:00; 26 hours allows one slow or delayed run before flagging.
+STALE_HOURS = 26
+
+# SQLite table -> Supabase table
+SB_TABLE_MAP = {
+    "projects": "audity_projects",
+    "leads": "audity_leads",
+    "memories": "nucleus_memories",
+    "captures": "nucleus_captures",
+    "contacts": "nucleus_contacts",
+    "insights": "nucleus_insights",
+}
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -152,7 +175,15 @@ def _row(d: dict, *keys: str) -> list:
 
 
 EXCLUDED_PROJECT_STATUSES = {"setup", "archived"}
-TEST_CLIENT_PREFIXES = ("sandbox",)
+
+
+def _test_client_prefixes() -> tuple[str, ...]:
+    """Test-rig exclusion list. Default covers the sandbox rigs; extend
+    without a code change via OBN_TEST_CLIENT_PREFIXES (comma separated,
+    case insensitive). Maintained by lane 1.
+    """
+    raw = os.environ.get("OBN_TEST_CLIENT_PREFIXES", "sandbox")
+    return tuple(p.strip().lower() for p in raw.split(",") if p.strip())
 
 
 def active_clients(projects: list[dict]) -> list[dict]:
@@ -162,16 +193,37 @@ def active_clients(projects: list[dict]) -> list[dict]:
     always keeps everything; this filter governs the Supabase push only.
     Override with OBN_SYNC_SCOPE=all for a full push.
     """
+    prefixes = _test_client_prefixes()
     out = []
     for p in projects:
         status = (p.get("status") or "").lower()
         name = (p.get("clientName") or "").lower()
         if status in EXCLUDED_PROJECT_STATUSES:
             continue
-        if name.startswith(TEST_CLIENT_PREFIXES):
+        if name.startswith(prefixes):
             continue
         out.append(p)
     return out
+
+
+# Trailing legal-form suffixes dropped during name normalization. Verified
+# against the live Cleveland Candy pair: 'Cleveland Candy Co.' (interviews)
+# vs 'Cleveland Candy Company' (setup) normalize to the same key.
+_NAME_SUFFIXES = {"co", "company", "inc", "incorporated", "llc", "ltd",
+                  "limited", "corp", "corporation", "gmbh", "plc", "lp", "llp"}
+
+
+def _normalized_name(value: str | None) -> str:
+    """Collapse case, punctuation, whitespace, and trailing legal suffixes
+    for duplicate detection (Cleveland Candy case: same client, two
+    spellings). Detection only; merging is a human decision, never automated.
+    """
+    cleaned = "".join(ch if ch.isalnum() or ch.isspace() else " "
+                      for ch in (value or "").lower())
+    tokens = cleaned.split()
+    while tokens and tokens[-1] in _NAME_SUFFIXES:
+        tokens.pop()
+    return " ".join(tokens)
 
 
 def open_db(db_path: Path = DB_PATH) -> sqlite3.Connection:
@@ -179,6 +231,23 @@ def open_db(db_path: Path = DB_PATH) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path)
     conn.executescript(SCHEMA)
     return conn
+
+
+def _sb_env() -> tuple[str, str] | None:
+    url = os.environ.get("OBN_SUPABASE_URL")
+    key = os.environ.get("OBN_SUPABASE_SERVICE_KEY")
+    if url and key:
+        return url.rstrip("/"), key
+    return None
+
+
+def _sb_headers(key: str) -> dict:
+    return {
+        "apikey": key,
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates,return=minimal",
+    }
 
 
 def sync(db_path: Path = DB_PATH, verbose: bool = True) -> dict:
@@ -250,27 +319,40 @@ def sync(db_path: Path = DB_PATH, verbose: bool = True) -> dict:
               "contacts": len(contacts), "insights": len(insights)}
 
     supabase_pushed = 0
+    purged = 0
+    status_label = "ok"
     supabase_note = "skipped (OBN_SUPABASE_URL / OBN_SUPABASE_SERVICE_KEY not set)"
-    if os.environ.get("OBN_SUPABASE_URL") and os.environ.get("OBN_SUPABASE_SERVICE_KEY"):
+    env = _sb_env()
+    if env:
         try:
             scope = os.environ.get("OBN_SYNC_SCOPE", "active").lower()
             sb_projects = projects if scope == "all" else active_clients(projects)
             supabase_pushed = _push_supabase(sb_projects, leads, memories, captures,
                                              contacts, insights, synced)
+            purged = _purge_stale_projects(env, sb_projects)
             supabase_note = (f"upserted {supabase_pushed} rows (scope={scope}, "
-                             f"projects pushed {len(sb_projects)} of {len(projects)})")
+                             f"projects pushed {len(sb_projects)} of {len(projects)}, "
+                             f"stale projects purged {purged})")
         except Exception as exc:
+            status_label = "supabase_failed"
             supabase_note = f"failed: {exc}"
 
+    finished = _now()
     with conn:
         conn.execute(
             "INSERT INTO sync_runs (started_at, finished_at, counts, supabase_pushed, status) "
             "VALUES (?,?,?,?,?)",
-            [started, _now(), json.dumps(counts), supabase_pushed, "ok"],
+            [started, finished, json.dumps(counts), supabase_pushed, status_label],
         )
     conn.close()
 
-    result = {"counts": counts, "sqlite": str(db_path), "supabase": supabase_note}
+    sync_run_remote = "skipped (Supabase env not set)"
+    if env:
+        sync_run_remote = _log_sync_run_remote(env, started, finished, counts,
+                                               supabase_pushed, status_label)
+
+    result = {"counts": counts, "sqlite": str(db_path), "supabase": supabase_note,
+              "sync_run_remote": sync_run_remote}
     if verbose:
         print(json.dumps(result, indent=2))
     return result
@@ -347,14 +429,8 @@ def _sb_rows_insights(items: list[dict], synced: str) -> list[dict]:
 def _push_supabase(projects, leads, memories, captures, contacts, insights,
                    synced: str) -> int:
     """Upsert mirror rows into BlueprintOS via PostgREST. Our database; not an Audity write."""
-    url = os.environ["OBN_SUPABASE_URL"].rstrip("/")
-    key = os.environ["OBN_SUPABASE_SERVICE_KEY"]
-    headers = {
-        "apikey": key,
-        "Authorization": f"Bearer {key}",
-        "Content-Type": "application/json",
-        "Prefer": "resolution=merge-duplicates,return=minimal",
-    }
+    url, key = _sb_env()
+    headers = _sb_headers(key)
     tables = {
         "audity_projects": _sb_rows_projects(projects, synced),
         "audity_leads": _sb_rows_leads(leads, synced),
@@ -379,6 +455,206 @@ def _push_supabase(projects, leads, memories, captures, contacts, insights,
                 pushed += len(chunk)
                 time.sleep(0.2)
     return pushed
+
+
+def _purge_stale_projects(env: tuple[str, str], current: list[dict]) -> int:
+    """Delete Supabase audity_projects rows that fell out of sync scope.
+
+    Audity archives projects mid-cycle (statuses flip to archived between
+    reads, observed live 2026-06-07). The push filter excludes them going
+    forward; this removes rows pushed before the flip. Hard delete here is
+    descoping, not data loss: SQLite keeps the full universe and raw JSON.
+
+    Guard: never purges when the current set is empty, so a transient empty
+    API response cannot wipe the table.
+    """
+    if not current:
+        return 0
+    ids = ",".join(f'"{p["id"]}"' for p in current if p.get("id"))
+    if not ids:
+        return 0
+    url, key = env
+    headers = _sb_headers(key)
+    headers["Prefer"] = "return=representation"
+    with httpx.Client(timeout=30) as client:
+        resp = client.delete(
+            f"{url}/rest/v1/audity_projects?id=not.in.({ids})&select=id",
+            headers=headers)
+    if resp.status_code >= 400:
+        raise RuntimeError(
+            f"Supabase stale-project purge failed: HTTP {resp.status_code} "
+            f"{resp.text[:200]}")
+    try:
+        return len(resp.json())
+    except Exception:
+        return 0
+
+
+def _log_sync_run_remote(env: tuple[str, str], started: str, finished: str,
+                         counts: dict, supabase_pushed: int,
+                         status_label: str) -> str:
+    """Append the sync audit row to the Supabase sync_runs table.
+
+    Best effort by design: a remote logging failure must never fail the
+    sync itself (SQLite already holds the authoritative audit row).
+    Returns a short status string for the sync result payload.
+    """
+    url, key = env
+    row = {"started_at": started, "finished_at": finished, "counts": counts,
+           "supabase_pushed": supabase_pushed, "status": status_label}
+    try:
+        with httpx.Client(timeout=15) as client:
+            resp = client.post(f"{url}/rest/v1/sync_runs",
+                               headers=_sb_headers(key), json=row)
+        if resp.status_code >= 400:
+            return f"failed: HTTP {resp.status_code} {resp.text[:200]}"
+        return "logged"
+    except Exception as exc:
+        return f"failed: {exc}"
+
+
+def _sb_count(client: httpx.Client, url: str, headers: dict, table: str) -> int | None:
+    resp = client.get(f"{url}/rest/v1/{table}?select=id&limit=1",
+                      headers={**headers, "Prefer": "count=exact"})
+    if resp.status_code >= 400:
+        return None
+    content_range = resp.headers.get("content-range", "")
+    try:
+        return int(content_range.split("/")[-1])
+    except ValueError:
+        return None
+
+
+def _sb_latest(client: httpx.Client, url: str, headers: dict, table: str,
+               column: str) -> str | None:
+    resp = client.get(
+        f"{url}/rest/v1/{table}?select={column}&order={column}.desc.nullslast&limit=1",
+        headers=headers)
+    if resp.status_code >= 400:
+        return None
+    try:
+        rows = resp.json()
+        return rows[0].get(column) if rows else None
+    except Exception:
+        return None
+
+
+def _hours_since(timestamp: str | None) -> float | None:
+    if not timestamp:
+        return None
+    try:
+        parsed = datetime.fromisoformat(str(timestamp).replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return (datetime.now(timezone.utc) - parsed).total_seconds() / 3600
+    except ValueError:
+        return None
+
+
+def drift_check(db_path: Path = DB_PATH, verbose: bool = False) -> dict:
+    """Three-way integrity check: live Audity reads vs SQLite vs Supabase.
+
+    Reads only; zero credit risk. Per table: live count, SQLite count,
+    Supabase count against the scope-adjusted expectation, and Supabase
+    freshness (newest synced_at). Anomaly flags cover count mismatches,
+    staleness past STALE_HOURS, missing remote sync_runs rows, and
+    duplicate active client names (flagged for human merge, never merged
+    automatically).
+    """
+    with Audity() as a:
+        projects = _items(a.projects.list(), "projects")
+        leads = _items(a.leads.list(limit=100), "data")
+        memories = _items(a.nucleus.memories(), "memories")
+        captures = _items(a.nucleus.captures(), "captures")
+        contacts = _items(a.nucleus.contacts(), "contacts")
+        insights = _items(a.nucleus.insights(limit=100), "insights")
+
+    live = {"projects": len(projects), "leads": len(leads),
+            "memories": len(memories), "captures": len(captures),
+            "contacts": len(contacts), "insights": len(insights)}
+
+    scope = os.environ.get("OBN_SYNC_SCOPE", "active").lower()
+    active = projects if scope == "all" else active_clients(projects)
+    expected_sb = dict(live)
+    expected_sb["projects"] = len(active)
+
+    sqlite_counts: dict[str, int] = {}
+    if db_path.exists():
+        conn = open_db(db_path)
+        for t in live:
+            sqlite_counts[t] = conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
+        conn.close()
+
+    flags: list[str] = []
+    sb_counts: dict[str, int | None] = {}
+    sb_fresh: dict[str, str | None] = {}
+    sync_runs_remote: dict | None = None
+    env = _sb_env()
+    if env:
+        url, key = env
+        headers = {"apikey": key, "Authorization": f"Bearer {key}"}
+        with httpx.Client(timeout=30) as client:
+            for t, sb_t in SB_TABLE_MAP.items():
+                sb_counts[t] = _sb_count(client, url, headers, sb_t)
+                sb_fresh[t] = _sb_latest(client, url, headers, sb_t, "synced_at")
+            sync_runs_remote = {
+                "count": _sb_count(client, url, headers, "sync_runs"),
+                "latest_finished_at": _sb_latest(client, url, headers,
+                                                 "sync_runs", "finished_at"),
+            }
+    else:
+        flags.append("supabase: env not set, remote checks skipped")
+
+    tables: dict[str, dict] = {}
+    for t in live:
+        tables[t] = {"live": live[t], "sqlite": sqlite_counts.get(t),
+                     "supabase": sb_counts.get(t),
+                     "supabase_expected": expected_sb[t],
+                     "supabase_max_synced_at": sb_fresh.get(t)}
+        if not sqlite_counts:
+            pass
+        elif sqlite_counts.get(t) != live[t]:
+            flags.append(f"{t}: SQLite {sqlite_counts.get(t)} != live {live[t]} "
+                         f"(run mirror sync)")
+        if env:
+            if sb_counts.get(t) is None:
+                flags.append(f"{t}: Supabase count unavailable")
+            elif sb_counts[t] != expected_sb[t]:
+                flags.append(f"{t}: Supabase {sb_counts[t]} != expected "
+                             f"{expected_sb[t]} (scope={scope})")
+            age = _hours_since(sb_fresh.get(t))
+            if age is not None and age > STALE_HOURS:
+                flags.append(f"{t}: Supabase freshest row is {age:.0f}h old "
+                             f"(threshold {STALE_HOURS}h)")
+    if not sqlite_counts:
+        flags.append("sqlite: mirror not built yet (run mirror sync)")
+
+    if env and sync_runs_remote is not None:
+        if not sync_runs_remote["count"]:
+            flags.append("sync_runs: no remote audit rows in Supabase")
+        else:
+            age = _hours_since(sync_runs_remote["latest_finished_at"])
+            if age is not None and age > STALE_HOURS:
+                flags.append(f"sync_runs: latest remote run is {age:.0f}h old "
+                             f"(threshold {STALE_HOURS}h)")
+
+    names: dict[str, list[str]] = {}
+    for p in active:
+        key_name = _normalized_name(p.get("clientName"))
+        if key_name:
+            names.setdefault(key_name, []).append(str(p.get("id")))
+    for key_name, ids in sorted(names.items()):
+        if len(ids) > 1:
+            flags.append(f"projects: duplicate active client name '{key_name}' "
+                         f"({len(ids)} rows: {', '.join(ids)}); human merge "
+                         f"decision needed, never auto-merge")
+
+    result = {"checked_at": _now(), "scope": scope, "tables": tables,
+              "sync_runs_remote": sync_runs_remote,
+              "flags": flags or ["none: live API, SQLite, and Supabase agree"]}
+    if verbose:
+        print(json.dumps(result, indent=2))
+    return result
 
 
 def status(db_path: Path = DB_PATH) -> dict:

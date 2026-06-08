@@ -113,6 +113,7 @@ def build_parser() -> argparse.ArgumentParser:
         dest="command", required=True)
     mir.add_parser("sync")
     mir.add_parser("status")
+    mir.add_parser("drift", help="live API vs SQLite vs Supabase integrity check")
 
     # sweep
     sw = sub.add_parser("sweep", help="daily read-only digest").add_subparsers(
@@ -136,7 +137,12 @@ def _dispatch(args: argparse.Namespace) -> int:
 
     if g == "mirror":
         from . import mirror
-        _emit(mirror.sync(verbose=False) if cmd == "sync" else mirror.status())
+        if cmd == "sync":
+            _emit(mirror.sync(verbose=False))
+        elif cmd == "drift":
+            _emit(mirror.drift_check())
+        else:
+            _emit(mirror.status())
         return 0
     if g == "sweep":
         from .sweep import run_sweep
