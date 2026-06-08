@@ -93,3 +93,10 @@ Rules before tools.
 - Observation for lane 3 (logged, not actioned, per lane discipline): duplicate lead business names in the mirror: Innovatio AI Solutions GmbH x3, Inside Small Business x2, kelly-jones.org x2. revenue_xref dedupe should expect these.
 - Tests: 18 of 18 green (8 new mirror unit tests added, stdlib unittest).
 - Awaiting Chris: schema_v3 paste (then lane 3 can populate); optional decision on storing a Supabase management token (sbp_) or DB password in user env to remove the DDL paste roundtrip.
+
+### 2026-06-08, lane 01 follow-on: data governance contract
+
+- docs/DATA_CONTRACTS.md authored: the ratified source of truth for data ownership, lifecycle, retention, and end-of-engagement disposition across Audity and BlueprintOS. Known facts cited to brief and code; vendor-side unknowns O-1 through O-7 flagged open.
+- Client edition rendered: OB1_Data_Handling_Brief.pdf (Architectural Blueprint theme, internal identifiers stripped) on the Drive folder for client technical and compliance review.
+- Jeremy (Audity vendor-side, OB.1 technical partner) data review email drafted for Chris; proposed Thu 2026-06-11 1:00 PM ET to close O-1 through O-7. Not sent; gated to Chris.
+- Realizes the lane 01 review recommendation: a single ratified data contract so policy stops living only in code comments.
